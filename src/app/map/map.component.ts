@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter } from '@angular/core';
+import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
 import { loadModules } from 'esri-loader';
 
 @Component({
@@ -9,6 +9,7 @@ import { loadModules } from 'esri-loader';
 export class MapComponent implements OnInit {
 
   @Output() selectedFeature = new EventEmitter();
+  @ViewChild('mapNode') private mapNodeElementRef: ElementRef;
 
   ngOnInit() {
     const options = { version: '3.28', css: true };
@@ -31,7 +32,7 @@ export class MapComponent implements OnInit {
         Query,
         QueryTask
       ]) => {
-        const map = new Map('mapNode', {
+        const map = new Map(this.mapNodeElementRef.nativeElement, {
           center: [-86.718, 36.545],
           zoom: 4,
           basemap: 'gray'
@@ -49,16 +50,18 @@ export class MapComponent implements OnInit {
 
           const queryTask = new QueryTask('https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/2');
           queryTask.execute(query, featureSet => {
-            map.graphics.clear();
-            const feature = featureSet.features[0];
+            if (featureSet.features[0]) {
+              map.graphics.clear();
+              const feature = featureSet.features[0];
 
-            const mySymbol = new SimpleFillSymbol('none',
-              new SimpleLineSymbol('solid', new Color([255, 0, 255]), 2.5), new Color([0, 0, 0, 0.25])
-            );
+              const mySymbol = new SimpleFillSymbol('none',
+                new SimpleLineSymbol('solid', new Color([255, 0, 255]), 2.5), new Color([0, 0, 0, 0.25])
+              );
 
-            feature.setSymbol(mySymbol);
-            map.graphics.add(feature);
-            this.selectedFeature.emit(feature);
+              feature.setSymbol(mySymbol);
+              map.graphics.add(feature);
+              this.selectedFeature.emit(feature);
+            }
           });
         });
       })
