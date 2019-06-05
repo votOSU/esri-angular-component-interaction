@@ -1,4 +1,4 @@
-import { Component, ElementRef, EventEmitter, OnInit, Output, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { loadModules } from 'esri-loader';
 
 @Component({
@@ -6,13 +6,13 @@ import { loadModules } from 'esri-loader';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.css']
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements AfterViewInit {
 
   @Output() selectedFeature = new EventEmitter();
   @ViewChild('mapNode') private mapNodeElementRef: ElementRef;
   @ViewChild('legendNode') private legendNodeElementRef: ElementRef;
 
-  ngOnInit() {
+  ngAfterViewInit() {
     const options = { version: '3.28', css: true };
 
     loadModules([
