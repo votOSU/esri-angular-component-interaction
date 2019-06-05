@@ -2,3 +2,14 @@
   height: 400px;
   width: 100%;
 }
+
+#legendNode {
+  height: 400px;
+  width: 100%;
+}
+
+.container {
+  display: grid;
+  grid-template-columns: 55% 35%;
+  grid-gap: 10%;
+}

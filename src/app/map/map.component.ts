@@ -10,6 +10,7 @@ export class MapComponent implements OnInit {
 
   @Output() selectedFeature = new EventEmitter();
   @ViewChild('mapNode') private mapNodeElementRef: ElementRef;
+  @ViewChild('legendNode') private legendNodeElementRef: ElementRef;
 
   ngOnInit() {
     const options = { version: '3.28', css: true };
@@ -21,7 +22,8 @@ export class MapComponent implements OnInit {
       'esri/symbols/SimpleLineSymbol',
       'esri/Color',
       'esri/tasks/query',
-      'esri/tasks/QueryTask'
+      'esri/tasks/QueryTask',
+      'esri/dijit/Legend'
     ], options)
       .then(([
         Map,
@@ -30,7 +32,8 @@ export class MapComponent implements OnInit {
         SimpleLineSymbol,
         Color,
         Query,
-        QueryTask
+        QueryTask,
+        Legend
       ]) => {
         const map = new Map(this.mapNodeElementRef.nativeElement, {
           center: [-86.718, 36.545],
@@ -42,6 +45,11 @@ export class MapComponent implements OnInit {
         layer.setVisibleLayers([2]);
 
         map.addLayer(layer);
+
+        const legend = new Legend({
+          map
+        }, this.legendNodeElementRef.nativeElement);
+        legend.startup();
 
         map.on('click', event => {
           const query = new Query();
