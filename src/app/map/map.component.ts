@@ -9,6 +9,7 @@ import { loadModules } from 'esri-loader';
 export class MapComponent implements AfterViewInit {
 
   @Output() selectedFeature = new EventEmitter();
+  
   @ViewChild('mapNode') private mapNodeElementRef: ElementRef;
   @ViewChild('legendNode') private legendNodeElementRef: ElementRef;
 
@@ -47,7 +48,7 @@ export class MapComponent implements AfterViewInit {
         map.addLayer(layer);
 
         const legend = new Legend({
-          map
+          map:map
         }, this.legendNodeElementRef.nativeElement);
         legend.startup();
 
@@ -69,9 +70,13 @@ export class MapComponent implements AfterViewInit {
               feature.setSymbol(mySymbol);
               map.graphics.add(feature);
               this.selectedFeature.emit(feature);
+              console.log("Name: "+feature.attributes.state_name);
+              //console.log("Population: "+feature.attributes.pop2000);
+              
             }
           });
         });
+
       })
       .catch(err => {
         console.error(err);
