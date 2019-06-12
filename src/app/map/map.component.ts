@@ -1,5 +1,8 @@
 import { AfterViewInit, Component, ElementRef, EventEmitter, Output, ViewChild } from '@angular/core';
 import { loadModules } from 'esri-loader';
+//import * as $ from 'node_modules/jquery';
+declare var $: any;
+
 
 @Component({
   selector: 'app-map',
@@ -12,6 +15,8 @@ export class MapComponent implements AfterViewInit {
   
   @ViewChild('mapNode') private mapNodeElementRef: ElementRef;
   @ViewChild('legendNode') private legendNodeElementRef: ElementRef;
+  selectedState: string;
+  pop2000: number; 
 
   ngAfterViewInit() {
     const options = { version: '3.28', css: true };
@@ -55,6 +60,7 @@ export class MapComponent implements AfterViewInit {
         map.on('click', event => {
           const query = new Query();
           query.returnGeometry = true;
+          query.outFields = ["*"];
           query.geometry = event.mapPoint;
 
           const queryTask = new QueryTask('https://sampleserver6.arcgisonline.com/arcgis/rest/services/USA/MapServer/2');
@@ -70,6 +76,9 @@ export class MapComponent implements AfterViewInit {
               feature.setSymbol(mySymbol);
               map.graphics.add(feature);
               this.selectedFeature.emit(feature);
+              this.selectedState = feature.attributes.state_name;
+              this.pop2000 = feature.attributes.pop2000;
+              $('#exampleModal').modal('show');
               console.log("Name: "+feature.attributes.state_name);
               //console.log("Population: "+feature.attributes.pop2000);
               
