@@ -21,6 +21,7 @@
     "@angular/router": "~7.2.0",
     "bootstrap": "^4.3.1",
     "core-js": "^2.5.4",
+    "d3": "^5.9.2",
     "esri-loader": "^2.9.2",
     "jquery": "^3.4.1",
     "rxjs": "~6.3.3",
