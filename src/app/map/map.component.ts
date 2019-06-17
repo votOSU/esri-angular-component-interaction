@@ -25,6 +25,20 @@ export class MapComponent implements AfterViewInit {
   femalePercent: number;
   malePercent: number;  
 
+  width = 300
+  height = 300
+  margin = 60
+  radius ;
+  svg;
+  color;
+  pie;
+  data_ready;
+  public disbursed: number = 80;
+  public obligated: number = 20;
+  // Create dummy data
+  public data = { }; 
+  //public data = { a: this.femalePercent, b: this.malePercent}
+
   ngAfterViewInit() {
     const options = { version: '3.28', css: true };
 
@@ -69,7 +83,7 @@ export class MapComponent implements AfterViewInit {
           query.returnGeometry = true;
           query.outFields = ["*"];
           query.geometry = event.mapPoint;
-
+          d3.selectAll("svg > *").remove();
           const queryTask = new QueryTask('https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
           queryTask.execute(query, featureSet => {
             if (featureSet.features[0]) {
@@ -93,20 +107,61 @@ export class MapComponent implements AfterViewInit {
               this.sumGender = this.femaleNum + this.maleNum;
               this.femalePercent = ((this.femaleNum / this.sumGender) * 100);
               this.malePercent = ((this.maleNum / this.sumGender) * 100);    
-              d3.select('.femaleNum')
-                .data([0])
+              d3.select('.femaleNum') 
+                //.data([30])
                 .style("background-color","#0eede9")
-                .style("width",+this.femalePercent+"%")
+                .style("width",+this.femalePercent+"%") //this.femalePercent
 
-              d3.select('.maleNum')
-                .data([70])
+              d3.select('.maleNum') 
+                //.data([70])
                 .style("background-color","#11fc92")
-                .style("width",+this.malePercent+"%")
+                .style("width",+this.malePercent+"%") //this.malePercent
 
+              //donut
+              this.data = { a: Math.round(this.femalePercent), b: Math.round(this.malePercent)}
+              this.radius = Math.min(this.width, this.height) / 2 - this.margin
+
+              this.svg = d3.select(".donut")
+                .append("svg")
+                .attr("width", this.width)
+                .attr("height", this.height)
+                .append("g")
+                .attr("transform", "translate(" + this.width / 2 + "," +
+                  this.height / 2 + ")");
+
+              // set the color scale
+              this.color = d3.scaleOrdinal()
+                .domain(Object.keys(this.data))
+                .range(["#0eede9", "#11fc92"]);
+
+              // Compute the position of each group on the pie:
+              this.pie = d3.pie()
+                .value(function (d) { return d.value })
+
+              this.data_ready = this.pie(d3.entries(this.data))
+
+              this.svg
+                .selectAll('whatever')
+                .data(this.data_ready)
+                .enter()
+                .append('path')
+                .attr('d', d3.arc()
+                  .innerRadius(130)         // This is the size of the donut hole
+                  .outerRadius(this.radius))
+                .attr('fill',(d) => { return (this.color(d.data.key)) })
+                .attr("stroke", "white")
+                .style("stroke-width", "2px")
+                .style("opacity", 0.7)
+                
+              this.svg.append("text")
+                .attr("text-anchor", "middle")
+                .text(Math.round(this.femalePercent)+"%")  
+              
+              
               $('#exampleModal').modal('show');
 
               console.log("Name: "+feature.attributes.STATE_NAME);
-              console.log("Total Pop: "+this.femalePercent + " : " + this.malePercent);
+              console.log("Total Pop: "+Math.round(this.femalePercent) + " : " + this.malePercent);
               
             }
           });

@@ -4,12 +4,12 @@
 }
 
 #legendNode {
-  height: 500px;
+  height: 300px;
   width: 100%;
 }
 
-.container {
+/* .container {
   display: grid;
   grid-template-columns: 65% 35%;
   grid-gap: 5%;
-}
+} */
