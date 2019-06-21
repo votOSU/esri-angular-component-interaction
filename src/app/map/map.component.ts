@@ -83,7 +83,7 @@ export class MapComponent implements AfterViewInit {
           query.returnGeometry = true;
           query.outFields = ["*"];
           query.geometry = event.mapPoint;
-          d3.selectAll("svg > *").remove();
+          d3.select("svg").remove();
           const queryTask = new QueryTask('https://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer/3');
           queryTask.execute(query, featureSet => {
             if (featureSet.features[0]) {
@@ -156,8 +156,9 @@ export class MapComponent implements AfterViewInit {
               this.svg.append("text")
                 .attr("text-anchor", "middle")
                 .text(Math.round(this.femalePercent)+"%")  
-              
-              
+                
+              d3.select(".donut").exit();
+                //d3.selectAll("svg > *").remove();
               $('#exampleModal').modal('show');
 
               console.log("Name: "+feature.attributes.STATE_NAME);
